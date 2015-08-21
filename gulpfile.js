@@ -1,8 +1,18 @@
+var gulp = require('gulp');
+var rimraf = require('gulp-rimraf');
+var changed = require('gulp-changed');
+var imagemin = require('gulp-imagemin');
+var htmlreplace = require('gulp-html-replace');
+var minifyHTML = require('gulp-minify-html');
+var autoprefix = require('gulp-autoprefixer');
+var minifyCSS = require('gulp-minify-css');
+var concat = require('gulp-concat');
+var uglify = require('gulp-uglify');
+
+
 /**
  *  Clean up built folders and files
  */
-var gulp = require('gulp');
-var rimraf = require('gulp-rimraf');
 gulp.task('cleanup', function() {
   return gulp.src(['./images', './css', './js', './video', './index.html'], { read: false }) // much faster
     .pipe(rimraf());
@@ -12,9 +22,6 @@ gulp.task('cleanup', function() {
 /**
  *  Compress images in image folder then copy it to root folder
  */
-var changed = require('gulp-changed');
-var imagemin = require('gulp-imagemin');
-// minify new images
 gulp.task('imagemin', function() {
 	var imgSrc = './src/images/*',
 		imgDst = './images';
@@ -41,11 +48,6 @@ gulp.task('video', function() {
 /**
  *  Replace js and css path in HTML page then minify
  */
-// include plug-ins
-var htmlreplace = require('gulp-html-replace');
-var minifyHTML = require('gulp-minify-html');
-
-// minify new or changed HTML pages
 gulp.task('htmlpage', function() {
 	var htmlSrc = './src/index.html',
 		htmlDst = './';
@@ -57,7 +59,8 @@ gulp.task('htmlpage', function() {
 			'js': {
 				'src': 'js/bundle.min.js',
 				'tpl': '<script src="%s" defer="defer"></script>'
-			}
+			},
+			'remove': ''
 		}))
 		.pipe(minifyHTML())
 		.pipe(gulp.dest(htmlDst));
@@ -67,11 +70,6 @@ gulp.task('htmlpage', function() {
 /**
  *   combine and minify css
  */
-// include plug-ins
-var autoprefix = require('gulp-autoprefixer');
-var minifyCSS = require('gulp-minify-css');
-
-// CSS concat, auto-prefix and minify
 gulp.task('styles', function() {
 	gulp.src(['./src/css/*.css'])
 		.pipe(concat('styles.min.css'))
@@ -84,11 +82,6 @@ gulp.task('styles', function() {
 /**
  *  Combine, and minify js files and rename it to bundle.js
  */
-// include plug-ins
-var concat = require('gulp-concat');
-var uglify = require('gulp-uglify');
-
-// JS concat, strip debugging and minify
 gulp.task('scripts', function() {
 	gulp.src(['./src/js/libs/jquery-2.1.4.min.js', './src/js/libs/bootstrap.min.js', './src/js/main.js'])
 	.pipe(concat('bundle.min.js'))
